@@ -1,0 +1,74 @@
+//
+// {{name}} Translator
+// Generated on {{date}} by gen v{{gen_version}}
+//
+
+{{#imports}}
+import {{import_name}}
+{{/imports}}
+
+{{#public}}public {{/public}}struct {{name}}Translator: Translator {
+    {{#custom_types.types}}
+    let {{lowcase_value}}Translator: AnyTranslator<{{value}}>
+    {{/custom_types.types}}
+    {{#custom_types}}
+
+    {{#public}}public {{/public}}init(
+        {{#custom_types.types}}
+        {{lowcase_value}}Translator: AnyTranslator<{{value}}> = .init({{value}}Translator()){{#comma}},{{/comma}}
+        {{/custom_types.types}}
+    ) {
+        {{#custom_types.types}}
+        self.{{lowcase_value}}Translator = {{lowcase_value}}Translator
+        {{/custom_types.types}}
+    }
+
+    {{/custom_types}}
+    {{#public}}public {{/public}}func translateFrom(dictionary json: [String: Any]) throws -> {{name}} {
+        {{#normal_fields}}
+        let {{custom_name}}: {{type}} = try{{#optional}}?{{/optional}} json.get(DTOKeys.{{key}})
+        {{/normal_fields}}
+        {{#enum_fields}}
+        {{#not_nil}}guard {{/not_nil}}let {{custom_name}} = {{#optional}}try? {{/optional}}{{clean_type}}(rawValue: {{#not_nil}}try {{/not_nil}}json.get(DTOKeys.{{key}})){{#not_nil}} else { throw TranslatorError.invalidJSONObject }{{/not_nil}}
+        {{/enum_fields}}
+        {{#custom_fields}}
+        let {{custom_name}} = try{{#optional}}?{{/optional}} {{lowcase_type}}Translator.translateFrom(dictionary: json.get(DTOKeys.{{key}}))
+        {{/custom_fields}}
+        {{#array_custom_fields}}
+        let {{custom_name}} = try{{#optional}}?{{/optional}} {{lowcase_type}}Translator.translateFrom(array: json.get(DTOKeys.{{key}}))
+        {{/array_custom_fields}}
+        return {{name}}(
+            {{#fields}}
+            {{custom_name}}: {{custom_name}}{{#comma}},{{/comma}}
+            {{/fields}}
+        )
+    }
+
+    {{#public}}public {{/public}}func translateToDictionary(_ object: {{name}}) -> [String: Any] {
+        return fromDTO(
+            DTOKeys.self,
+            [
+                {{#normal_fields}}
+                .{{key}}: object.{{custom_name}}{{#optional}} as Any{{/optional}},
+                {{/normal_fields}}
+                {{#enum_fields}}
+                .{{key}}: object.{{custom_name}}{{#optional}}?{{/optional}}.rawValue{{#optional}} as Any{{/optional}},
+                {{/enum_fields}}
+                {{#custom_fields}}
+                .{{key}}: {{lowcase_type}}Translator.translateToDictionary({{#optional}}from: {{/optional}}object.{{custom_name}}),
+                {{/custom_fields}}
+                {{#array_custom_fields}}
+                .{{key}}: {{lowcase_type}}Translator.translateToArray(object.{{custom_name}}){{#optional}} as Any{{/optional}},
+                {{/array_custom_fields}}
+            ]
+        )
+    }
+}
+
+extension {{name}}Translator {
+    enum DTOKeys: String {
+        {{#fields}}
+        case {{key}}
+        {{/fields}}
+    }
+}

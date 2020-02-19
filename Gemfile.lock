@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    fileutils (1.4.1)
+    mustache (1.1.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  fileutils
+  mustache
+
+BUNDLED WITH
+   2.0.2

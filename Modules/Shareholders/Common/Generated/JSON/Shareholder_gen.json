@@ -1,0 +1,61 @@
+{
+	"name": "Shareholder",
+	"description": "Модель держателя карты",
+	"protocols": ["UniqueIdentifiable"],
+	"custom_imports": ["SharedModels"],
+	"fields": [
+		{
+			"key": "id",
+			"custom_name": "uid",
+			"type": "String",
+			"description": "Идентификатор акционера"
+		},
+		{
+			"key": "iconURL",
+			"type": "String",
+			"description": "Путь к аватарке"
+		},
+		{
+			"key": "name",
+			"type": "String",
+			"description": "Имя акционера"
+		},
+		{
+			"key": "company",
+			"type": "Company",
+			"description": "Название компании",
+			"enum": true
+		},
+		{
+			"key": "amount",
+			"type": "Amount",
+			"description": "Сумма активов"
+		},
+		{
+			"key": "profit",
+			"type": "Double",
+			"description": "Доходность за предыдущий год"
+		}
+	],
+	"subenums": [
+		{
+			"name": "Company",
+			"type": "String",
+			"description": "Тип банка",
+			"cases": [
+				{
+					"custom_key": "tinek",
+					"name": "tinkoff"
+				},
+				{
+					"custom_key": "Sber",
+					"name": "sberbank"
+				},
+				{
+					"custom_key": "Alfabank",
+					"name": "alfa"
+				}
+			]
+		}
+	]
+}
