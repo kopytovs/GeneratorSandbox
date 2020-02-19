@@ -53,12 +53,9 @@ class FieldsParser
 
       next unless !(field["enum"]) && (!SIMPLE_TYPES.include? clean_type)
 
-      camel_case_type = clean_type.clone
-      camel_case_type[0] = camel_case_type[0].downcase
-
       new_type = {
         "value" => clean_type,
-        "lowcase_value" => camel_case_type,
+        "lowcase_value" => create_camel_case(clean_type),
         "comma" => true
       }
 
@@ -91,7 +88,7 @@ class FieldsParser
       new_field["comma"] = true
 
       clean_type = field["type"].delete "[]?"
-      new_field["lowcase_type"] = clean_type.downcase
+      new_field["lowcase_type"] = create_camel_case(clean_type)
       new_field["clean_type"] = clean_type
 
       new_field["type"] = field["type"]
@@ -265,6 +262,13 @@ class FieldsParser
       not_null_fields.push(field) unless field["type"].include? "?"
     end
     return not_null_fields.empty?
+  end
+
+  # Создает camelCase из типа
+  def self.create_camel_case(type)
+    camel_case_type = type.clone
+    camel_case_type[0] = camel_case_type[0].downcase
+    return camel_case_type
   end
 end
 
