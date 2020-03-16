@@ -1,6 +1,6 @@
 //
 // Shareholder Model
-// Generated on 18/02/2020 by gen v0.2
+// Generated on 13/03/2020 by gen v0.3
 //
 
 import AlfaFoundation
@@ -24,7 +24,7 @@ struct Shareholder: Equatable, UniqueIdentifiable {
     /// Название компании
     let company: Company
     /// Сумма активов
-    let amount: Amount
+    let amount: Amount?
     /// Доходность за предыдущий год
     let profit: Double
 }

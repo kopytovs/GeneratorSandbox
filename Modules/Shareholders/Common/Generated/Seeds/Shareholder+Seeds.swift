@@ -1,6 +1,6 @@
 //
 // Shareholder+Seeds
-// Generated on 18/02/2020 by gen v0.2
+// Generated on 13/03/2020 by gen v0.3
 //
 
 import AlfaFoundation
@@ -13,7 +13,7 @@ extension Shareholder {
             iconURL: <#String#>,
             name: <#String#>,
             company: <#Company#>,
-            amount: <#Amount#>,
+            amount: <#Amount?#>,
             profit: <#Double#>
         )
     }

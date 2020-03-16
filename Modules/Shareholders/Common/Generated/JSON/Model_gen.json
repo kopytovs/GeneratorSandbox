@@ -1,0 +1,36 @@
+{
+    "name": "Model",
+    "description": "Test",
+    "fields": [
+        {
+            "key": "optUrl",
+            "type": "URL?",
+            "description": "Опциональный урл"
+        },
+        {
+            "key": "normUrl",
+            "type": "URL",
+            "description": "Не опциональный урл"
+        },
+        {
+        	"key": "someHash",
+        	"type": "[String: Any]",
+        	"description": "Какой-то хэш"
+        },
+        {
+            "key": "someOptionalHash",
+            "type": "[String: Any]?",
+            "description": "Какой-то опциональный хэш"
+        },
+        {
+            "key": "someDecimal",
+            "type": "Decimal",
+            "description": "Какой-то десимал"
+        },
+        {
+            "key": "someOptionalDecimal",
+            "type": "Decimal?",
+            "description": "Какой-то опциональный десимал"
+        }
+    ]
+}

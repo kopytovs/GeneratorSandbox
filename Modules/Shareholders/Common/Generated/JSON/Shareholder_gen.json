@@ -28,7 +28,8 @@
 		},
 		{
 			"key": "amount",
-			"type": "Amount",
+			"type": "Amount?",
+			"translator_class": "CustomAmountTranslator",
 			"description": "Сумма активов"
 		},
 		{

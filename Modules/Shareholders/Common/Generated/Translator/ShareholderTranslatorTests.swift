@@ -1,6 +1,6 @@
 //
 // ShareholderTranslator Tests
-// Generated on 18/02/2020 by gen v0.2
+// Generated on 13/03/2020 by gen v0.3
 //
 
 import AlfaFoundation
@@ -29,6 +29,11 @@ final class ShareholderTranslatorTests: QuickSpec {
                     try translator.translateFrom(dictionary: TestData.validDTO)
                 }.to(equal(TestData.validModel))
             }
+            it("should return data model for valid DTO without amount") {
+                expect {
+                    try translator.translateFrom(dictionary: TestData.validDTOWithoutAmount)
+                }.to(equal(TestData.validModelWithoutAmount))
+            }
         }
 
         describe(".translateToDictionary") {
@@ -55,7 +60,22 @@ extension ShareholderTranslatorTests {
             keys.name.rawValue: validModel.name,
             keys.profit.rawValue: validModel.profit,
             keys.company.rawValue: validModel.company.rawValue,
-            keys.amount.rawValue: AmountTranslator().translateToDictionary(validModel.amount),
+            keys.amount.rawValue: CustomAmountTranslator().translateToDictionary(from: validModel.amount),
+        ]
+        static let validModelWithoutAmount = Shareholder(
+            uid: validModel.uid,
+            iconURL: validModel.iconURL,
+            name: validModel.name,
+            company: validModel.company,
+            amount: nil,
+            profit: validModel.profit
+        )
+        static let validDTOWithoutAmount: [String: Any] = [
+            keys.id.rawValue: validModel.uid,
+            keys.iconURL.rawValue: validModel.iconURL,
+            keys.name.rawValue: validModel.name,
+            keys.profit.rawValue: validModel.profit,
+            keys.company.rawValue: validModel.company.rawValue,
         ]
     }
 }
