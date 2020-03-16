@@ -12,7 +12,7 @@ class FieldsGenerator
     all_fields = FieldsParser.create_all_fields(fields, is_public)
     any_fields = FieldsParser.generate_any_fields(all_fields)
     custom_types = FieldsParser.create_custom_types(all_fields, is_public)
-    subenums = FieldsParser.read_subenums(subenums, is_public)
+    subenums_fields = FieldsParser.read_subenums(subenums, is_public)
 
     return Fields.new(
       imports_array,
@@ -23,7 +23,9 @@ class FieldsGenerator
       any_fields.custom_fields,
       any_fields.array_custom_fields,
       any_fields.enum_fields,
-      subenums
+      any_fields.url_fields,
+      any_fields.decimal_fields,
+      subenums_fields
     )
   end
 
@@ -44,6 +46,8 @@ class FieldsGenerator
       any_fields.custom_fields,
       any_fields.array_custom_fields,
       any_fields.enum_fields,
+      any_fields.url_fields,
+      any_fields.decimal_fields,
       valid_model_field,
       !all_fields_nullable
     )

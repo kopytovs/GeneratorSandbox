@@ -37,6 +37,8 @@ class ModelGenerator
       "custom_fields" => fields.custom_fields,
       "array_custom_fields" => fields.array_custom_fields,
       "enum_fields" => fields.enum_fields,
+      "url_fields" => fields.url_fields,
+      "decimal_fields" => fields.decimal_fields,
       "subenums" => fields.subenums
     }
 
@@ -70,7 +72,9 @@ class ModelGenerator
       "normal_fields" => fields.normal_fields,
       "custom_fields" => fields.custom_fields,
       "array_custom_fields" => fields.array_custom_fields,
-      "enum_fields" => fields.enum_fields
+      "enum_fields" => fields.enum_fields,
+      "url_fields" => fields.url_fields,
+      "decimal_fields" => fields.decimal_fields
     }
 
     LogManager.log_msg("Конфигурационный файл получен")
@@ -129,7 +133,7 @@ class ModelGenerator
   def init_json_directory(_path, json_path, model, json_names)
     json_names.each do |name|
       file_path = "#{json_path}#{name}_gen.json"
-      configuration = { name => name }
+      configuration = { "name" => name }
       FileReader.save_new_file(file_path, configuration, model)
     end
   end

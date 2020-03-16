@@ -74,11 +74,17 @@ extension {{name}}TranslatorTests {
             keys.{{key}}.rawValue: validModel.{{custom_name}}{{#optional}}?{{/optional}}.rawValue{{#optional}} as Any{{/optional}},
             {{/enum_fields}}
             {{#custom_fields}}
-            keys.{{key}}.rawValue: {{clean_type}}Translator().translateToDictionary({{#optional}}from: {{/optional}}validModel.{{custom_name}}),
+            keys.{{key}}.rawValue: {{translator_class}}().translateToDictionary({{#optional}}from: {{/optional}}validModel.{{custom_name}}),
             {{/custom_fields}}
             {{#array_custom_fields}}
-            keys.{{key}}.rawValue: {{clean_type}}Translator().translateToArray(validModel.{{custom_name}}){{#optional}} as Any{{/optional}},
+            keys.{{key}}.rawValue: {{translator_class}}().translateToArray(validModel.{{custom_name}}){{#optional}} as Any{{/optional}},
             {{/array_custom_fields}}
+            {{#url_fields}}
+            keys.{{key}}.rawValue: validModel.{{custom_name}}{{#optional}}?{{/optional}}.absoluteString{{#optional}} as Any{{/optional}},
+            {{/url_fields}}
+            {{#decimal_fields}}
+            keys.{{key}}.rawValue: (validModel.{{custom_name}} as NSDecimalNumber{{#optional}}?{{/optional}}){{#optional}}?{{/optional}}.doubleValue{{#optional}} as Any{{/optional}},
+            {{/decimal_fields}}
         ]
         {{#optional_fields}}
         static let validModelWithout{{custom_name_up}} = {{name}}(
@@ -94,11 +100,17 @@ extension {{name}}TranslatorTests {
             keys.{{key}}.rawValue: validModel.{{custom_name}}{{#optional}}?{{/optional}}.rawValue{{#optional}} as Any{{/optional}},
             {{/enum_fields}}
             {{#custom_fields}}
-            keys.{{key}}.rawValue: {{clean_type}}Translator().translateToDictionary({{#optional}}from: {{/optional}}validModel.{{custom_name}}),
+            keys.{{key}}.rawValue: {{translator_class}}().translateToDictionary({{#optional}}from: {{/optional}}validModel.{{custom_name}}),
             {{/custom_fields}}
             {{#array_custom_fields}}
-            keys.{{key}}.rawValue: {{clean_type}}Translator().translateToArray(validModel.{{custom_name}}){{#optional}} as Any{{/optional}},
+            keys.{{key}}.rawValue: {{translator_class}}().translateToArray(validModel.{{custom_name}}){{#optional}} as Any{{/optional}},
             {{/array_custom_fields}}
+            {{#url_fields}}
+            keys.{{key}}.rawValue: validModel.{{custom_name}}{{#optional}}?{{/optional}}.absoluteString{{#optional}} as Any{{/optional}},
+            {{/url_fields}}
+            {{#decimal_fields}}
+            keys.{{key}}.rawValue: (validModel.{{custom_name}} as NSDecimalNumber{{#optional}}?{{/optional}}){{#optional}}?{{/optional}}.doubleValue{{#optional}} as Any{{/optional}},
+            {{/decimal_fields}}
         ]
         {{/optional_fields}}
     }

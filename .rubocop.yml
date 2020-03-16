@@ -1,0 +1,61 @@
+Style/AsciiComments:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/MultilineIfModifier:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/RescueStandardError:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false # так как Gym модифицирует принимаемые параметры сборки
+
+Naming/PredicateName:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/UnneededCondition:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 300
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude:
+    - 'fastlane/run_module_tests.rb'
+
+Metrics/AbcSize:
+  Max: 50
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false

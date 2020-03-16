@@ -5,15 +5,32 @@ require 'mustache'
 require 'fileutils'
 require_relative 'gen_types'
 require_relative 'gen_log_manager.rb'
+require_relative 'gen_error'
 
 # Чтение файлов
 class FileReader
+  # Название моделей для перезаписи
+  class << self
+    attr_accessor :rewriting_models
+  end
+
   # rubocop:disable JSONLoad
 
   # Считывает json модели
   def self.read_template(template_path)
     LogManager.log_msg("Загрузка json по пути #{template_path}")
     return JSON.load(File.open(template_path))
+  end
+
+  # Считывает и возвращает все JSON файлы по маске
+  def self.get_all_jsons(json_mask)
+    LogManager.log_msg("Запущено считывание всех json по пути #{json_mask}")
+    jsons = []
+    Dir.glob(json_mask) do |filename|
+      jsons.push(read_template(filename))
+    end
+    LogManager.log_msg("JSON файлы получены")
+    return jsons
   end
 
   # rubocop:enable JSONLoad
@@ -35,13 +52,14 @@ class FileReader
 
   # Сохранить данные в файл
   def self.save_new_file(path, configuration, model)
-    if File.file?(path)
+    model_name = configuration["name"]
+    if File.file?(path) && safe_array(rewriting_models).include?(model_name) == false
       puts GenError.GEN_FILE_EXIST_YET(path)
     else
       File.open(path, 'w') do |file|
         file.puts(Mustache.render(model, configuration))
       end
-      LogManager.log_msg("Рендеринг конфига #{configuration["name"]} по пути #{path} прошел успешно}")
+      LogManager.log_msg("Рендеринг конфига #{model_name} по пути #{path} прошел успешно}")
     end
   end
 
@@ -56,9 +74,12 @@ class FileReader
 
   # Проверка на валдиность JSON
   def self.is_json_valid(smth_json)
+    LogManager.log_msg("Запущена проверка json-файла на валидность")
     JSON.parse(smth_json)
+    LogManager.log_msg("JSON валиден")
     return true
-  rescue JSON::ParseError
+  rescue JSON::ParserError
+    LogManager.log_msg("#{smth_json} не валиден")
     return false
   end
 
@@ -84,6 +105,7 @@ class FileReader
 
   # Считывает и возвращает шаблоны для записи
   def self.templates
+    LogManager.log_msg("Запущена считывание и получение шаблонов для записи")
     return TemplateModels.new(
       read_model(StaticPath.MODEL_PATH),
       read_model(StaticPath.TRANSLATOR_MODEL_PATH),

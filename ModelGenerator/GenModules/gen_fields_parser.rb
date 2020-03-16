@@ -6,30 +6,44 @@ require_relative 'gen_types'
 require_relative 'gen_log_manager.rb'
 # Считывает массив полей и парсит его
 class FieldsParser
+  # rubocop:disable MethodLength
+  # rubocop:disable CyclomaticComplexity
+  # rubocop:disable PerceivedComplexity
   # Генерирует структуру AnyFields, содержащую массивы, разделенные по типу:
   # (простые поля, енамы, поля с кастомным типом, поля с массивами кастомного типа)
   def self.generate_any_fields(fields)
     LogManager.log_msg("Запущена генерация массивов различных типов данных")
-
     normal_fields = []
     custom_fields = []
     array_custom_fields = []
     enum_fields = []
+    url_fields = []
+    decimal_fields = []
 
     fields.each do |field|
       field_type = field["clean_type"]
-      if field["enum"]
-        LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как enum")
-        enum_fields.push(field)
-      elsif (!SIMPLE_TYPES.include? field_type) && (field["type"].include? "[")
-        LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как массив кастомного типа")
-        array_custom_fields.push(field)
-      elsif !SIMPLE_TYPES.include? field_type
-        LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как кастомный тип")
-        custom_fields.push(field)
-      else
+      if SIMPLE_TYPES.include?(field_type) || (field_type.include? ":")
         LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как простейший тип")
         normal_fields.push(field)
+      elsif field["enum"]
+        LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как enum")
+        enum_fields.push(field)
+      elsif !DEFAULT_TYPES.include? field_type
+        if field["type"].include? "["
+          LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как массив кастомного типа")
+          array_custom_fields.push(field)
+        else
+          LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как кастомный тип")
+          custom_fields.push(field)
+        end
+      elsif field_type == "URL"
+        LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как URL")
+        url_fields.push(field)
+      elsif field_type == "Decimal"
+        LogManager.log_msg("Поле по ключу #{field["key"]} распознано, как Decimal")
+        decimal_fields.push(field)
+      else
+        LogManager.log_msg("Поле по ключу #{field["key"]} не распознано")
       end
     end
 
@@ -37,10 +51,15 @@ class FieldsParser
     custom_fields = custom_fields.empty? ? nil : custom_fields
     array_custom_fields = array_custom_fields.empty? ? nil : array_custom_fields
     enum_fields = enum_fields.empty? ? nil : enum_fields
+    url_fields = url_fields.empty? ? nil : url_fields
+    decimal_fields = decimal_fields.empty? ? nil : decimal_fields
 
     LogManager.log_msg("Генерация массивов различных типов данных завершена")
-    return AnyFields.new(normal_fields, custom_fields, array_custom_fields, enum_fields)
+    return AnyFields.new(normal_fields, custom_fields, array_custom_fields, enum_fields, url_fields, decimal_fields)
   end
+  # rubocop:enable CyclomaticComplexity
+  # rubocop:enable MethodLength
+  # rubocop:enable PerceivedComplexity
 
   # Создает и возвращает хэш с массивом всех найденных кастомных типов
   def self.create_custom_types(fields, is_public)
@@ -49,13 +68,20 @@ class FieldsParser
     custom_types = []
 
     fields.each do |field|
-      clean_type = field["type"].delete "[]?"
+      clean_type = field["type"].delete "?"
+      is_dictionary = clean_type.include? ":"
+      clean_type = clean_type.delete "[]" unless is_dictionary
 
-      next unless !(field["enum"]) && (!SIMPLE_TYPES.include? clean_type)
+      next unless !(field["enum"]) &&
+                  (!DEFAULT_TYPES.include? clean_type) &&
+                  is_dictionary == false
 
+      translator_class = create_translator_class(field[clean_type], field["translator_class"])
       new_type = {
         "value" => clean_type,
         "lowcase_value" => create_camel_case(clean_type),
+        "translator_class" => translator_class,
+        "translator_name" => create_camel_case(translator_class),
         "comma" => true
       }
 
@@ -87,8 +113,11 @@ class FieldsParser
       new_field["description"] = field["description"]
       new_field["comma"] = true
 
-      clean_type = field["type"].delete "[]?"
-      new_field["lowcase_type"] = create_camel_case(clean_type)
+      clean_type = field["type"].delete "?"
+      clean_type = clean_type.delete "[]" unless clean_type.include? ":"
+      translator_class = create_translator_class(clean_type, field["translator_class"])
+      new_field["translator_class"] = translator_class
+      new_field["translator_name"] = create_camel_case(translator_class)
       new_field["clean_type"] = clean_type
 
       new_field["type"] = field["type"]
@@ -98,6 +127,9 @@ class FieldsParser
 
       new_field["enum"] = field["enum"] unless field["enum"].nil?
 
+      new_field["open_bracket"] = "{"
+      new_field["closed_bracket"] = "}"
+
       all_fields.push(new_field)
     end
 
@@ -105,6 +137,7 @@ class FieldsParser
     return all_fields
   end
 
+  # rubocop:disable MethodLength
   # Создает массив опциональных полей
   def self.create_optional_fields(fields)
     LogManager.log_msg("Запущена генерация массива с опциональными полями")
@@ -117,7 +150,7 @@ class FieldsParser
       new_optional = {}
       custom_name = field["custom_name"]
       new_optional["custom_name"] = custom_name
-      new_optional["custom_name_up"] = custom_name.capitalize
+      new_optional["custom_name_up"] = create_capitalize(custom_name)
       nullable_fields = []
       fields.each do |n_field|
         new_field = n_field.clone
@@ -135,6 +168,8 @@ class FieldsParser
       new_optional["custom_fields"] = any_fields.custom_fields
       new_optional["array_custom_fields"] = any_fields.array_custom_fields
       new_optional["enum_fields"] = any_fields.enum_fields
+      new_optional["url_fields"] = any_fields.url_fields
+      new_optional["decimal_fields"] = any_fields.decimal_fields
 
       LogManager.log_msg("Добавлено опциональное поле с именем #{new_optional["custom_name"]}")
       optional_fields.push(new_optional)
@@ -143,6 +178,7 @@ class FieldsParser
     LogManager.log_msg("Генерация массива с опциональными полями завершена")
     return optional_fields.empty? ? nil : optional_fields
   end
+  # rubocop:enable MethodLength
 
   # rubocop:disable MethodLength
   # Считывает массив вложенных енамов, парсит его, преобразовывает
@@ -257,18 +293,38 @@ class FieldsParser
 
   # Проверяет поля на nullability
   def self.check_fields_nullability(fields)
+    LogManager.log_msg("Запущена проверка полей на nullability - #{fields}")
     not_null_fields = []
     fields.each do |field|
       not_null_fields.push(field) unless field["type"].include? "?"
     end
+    LogManager.log_msg("Проверка завершена с флагом #{not_null_fields.empty?}")
     return not_null_fields.empty?
   end
 
   # Создает camelCase из типа
   def self.create_camel_case(type)
-    camel_case_type = type.clone
+    LogManager.log_msg("Запущена генерация camelCase для #{type}")
+    camel_case_type = type.dup
     camel_case_type[0] = camel_case_type[0].downcase
+    LogManager.log_msg("Получен camelCase: #{camel_case_type}")
     return camel_case_type
+  end
+
+  def self.create_capitalize(name)
+    LogManager.log_msg("Запущена генерация uppercase первого символа для #{name}")
+    capitalize_name = name.dup
+    capitalize_name[0] = capitalize_name[0].capitalize
+    LogManager.log_msg("Получен uppercase первого символа: #{name}")
+    return capitalize_name
+  end
+
+  # Создает название транслятора
+  def self.create_translator_class(type, translator_class)
+    LogManager.log_msg("Запущена генерация названия транслятора для типа #{type}")
+    return translator_class if translator_class.nil? == false
+
+    return "#{type}Translator"
   end
 end
 

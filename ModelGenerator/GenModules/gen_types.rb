@@ -2,13 +2,30 @@
 
 # rubocop:disable MethodName
 
-# Константы и публичные типы
+# Константы, публичные типы и статичные пути к файлам
+
+# Логотип
+
+LOGO = %(
+
+\t .d888888  dP .8888b                   dP                 dP
+\td8'    88  88 88   "                   88                 88
+\t88aaaaa88a 88 88aaa  .d8888b.          88        .d8888b. 88d888b.
+\t88     88  88 88     88'  `88 88888888 88        88'  `88 88'  `88
+\t88     88  88 88     88.  .88          88        88.  .88 88.  .88
+\t88     88  dP dP     `88888P8          88888888P `88888P8 88Y8888'
+
+)
 
 # Массив примитивных типов
-SIMPLE_TYPES = %w[Bool Int Float Double Character String]
+SIMPLE_TYPES = %w[Bool Int Float Double Character String UniqueIdentifiable]
+
+ADDITIONAL_TYPES = %w[URL Decimal Dictionary]
+
+DEFAULT_TYPES = SIMPLE_TYPES + ADDITIONAL_TYPES
 
 # Версия генератора
-GEN_VERSION = 0.2
+GEN_VERSION = 0.3
 
 # Стандартное название модели
 JSON_DEFAULT_NAME = "temp"
@@ -16,20 +33,20 @@ JSON_DEFAULT_NAME = "temp"
 # Формат даты
 DEFAULT_DATE_FORMAT = "%d/%m/%Y"
 
-# Флаг логгирования
-VERBOSE_MODE = false
-
 # Дефолтные импорты
 DEFAULT_IMPORTS = ["AlfaFoundation"]
 
 # Импорты для тестов
-TEST_IMPORTS = ["Nimble", "Quick"]
+TEST_IMPORTS = %w[Nimble Quick]
 
 # Дефолтные протоколы
 DEFAULT_PROTOCOLS = ["Equatable"]
 
 # Дефолтное название сида
 DEFAULT_SEED_NAME = "value"
+
+# Дефолтный суффикс json-файлов
+JSON_FILES_SUFFIX = "**/*_gen.json"
 
 # Структура, содержащая в себе все массивы для генерации модели
 Fields = Struct.new(
@@ -41,6 +58,8 @@ Fields = Struct.new(
   :custom_fields,
   :array_custom_fields,
   :enum_fields,
+  :url_fields,
+  :decimal_fields,
   :subenums
 )
 # Структура, содержащая в себе все массивы для генерации тестов
@@ -52,6 +71,8 @@ TestFields = Struct.new(
   :custom_fields,
   :array_custom_fields,
   :enum_fields,
+  :url_fields,
+  :decimal_fields,
   :valid_model,
   :has_not_nil
 )
@@ -71,95 +92,17 @@ TemplateModels = Struct.new(
 )
 
 # Структура, содержащая в себе все массивы, разделенные по типам
-AnyFields = Struct.new(:normal_fields, :custom_fields, :array_custom_fields, :enum_fields)
+AnyFields = Struct.new(
+  :normal_fields,
+  :custom_fields,
+  :array_custom_fields,
+  :enum_fields,
+  :url_fields,
+  :decimal_fields
+)
+
 # Структура, содержащая в себе полную и упрощенную команды
 Command = Struct.new(:full, :short)
-
-# Класс с возможными ошибками
-class GenError
-  def self.GEN_HELP_MESSAGE
-    %(Извините, вы ввели неверную команду, попробуйте эти:
-
-		* --init [names] - инициализация json файлов для описания моделей, где [names] - массив имен моделей, если массив пустой, то будет создан дефолтный json (-i);
-
-		* --generate - генерация моделей, трансляторов и тестов к ним по обнаруженным в модуле json файлам с описанием моделей (-g);
-
-    * --seeds - генерация сидов к моделям (-s);
-
-		* --verbose - режим отладки с подробным описанием работы скрипта, указывается после всего (-v);
-
-    Генерацию моделей можно запускать совместно с генерацией сидов, для этого нужно склеить команды вместе(--generate-seeds или просто -gs)
-
-		Также, перед каждой командой необходимо указать название модуля и сабмодуля, например: './model_generator.sh Shareholders Common -g')
-  end
-
-  def self.GEN_SUBMODULE_NOT_EXIST
-    "Извините, сабмодуль не найден"
-  end
-
-  def self.GEN_FILE_EXIST_YET(file_path)
-    "Извините, но файл #{file_path} уже существует, если вы хотите его перезаписать, то сперва его нужно удалить."
-  end
-
-  def self.GEN_WRONG_JSON_FILE(file_path)
-    "Извините, json файл #{file_path} не распознан"
-  end
-
-  def self.GEN_ANY_JSON_NOT_EXIST
-    "Извините, ни один конфигурационный json не найден"
-  end
-end
-
-# Доступные комманды
-class GenCommand
-  def self.initialization
-    Command.new("--init", "-i")
-  end
-
-  def self.generate
-    Command.new("--generate", "-g")
-  end
-
-  def self.seeds_generate
-    Command.new("--seeds", "-s")
-  end
-
-  def self.verbose
-    Command.new("--verbose", "-v")
-  end
-
-  def self.generate_with_seeds
-    Command.new("--generate--seeds", "-gs")
-  end
-
-  def self.generate_with_seeds_alt
-    Command.new("--seeds--generate", "-sg")
-  end
-
-  def self.is_initialization(command)
-    is_command(command, initialization)
-  end
-
-  def self.is_generate(command)
-    is_command(command, generate)
-  end
-
-  def self.is_verbose(command)
-    is_command(command, verbose)
-  end
-
-  def self.is_seeds(command)
-    is_command(command, seeds_generate)
-  end
-
-  def self.is_generate_with_seeds(command)
-    is_command(command, generate_with_seeds) || is_command(command, generate_with_seeds_alt)
-  end
-
-  def self.is_command(name, command)
-    [command.full, command.short].include?(name)
-  end
-end
 
 # Статичные пути к файлам
 class StaticPath
@@ -202,6 +145,11 @@ class StaticPath
   def self.SEEDS_SUBPATH
     "Generated/Seeds/"
   end
+end
+
+# Вернет пустой массив, если исходный nil
+def safe_array(array)
+  array.nil? ? [] : array
 end
 
 # rubocop:enable MethodName

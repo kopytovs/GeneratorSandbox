@@ -10,7 +10,7 @@ require_relative 'gen_log_manager.rb'
 # Реализация комманд скрипта
 class CommandActions
   # Инициализация json файлов
-  def self.init_jsons(submodule_path, arguments)
+  def self.init_jsons(submodule_path, json_names)
     LogManager.log_msg("Запущен процесс инцииализации json файлов")
 
     generator = ModelGenerator.new
@@ -18,16 +18,6 @@ class CommandActions
 
     json_path = "#{submodule_path}#{StaticPath.JSON_SUBPATH}"
     FileReader.touch_directory(json_path)
-
-    json_names = []
-
-    if arguments.length == 3
-      json_names.push(JSON_DEFAULT_NAME)
-    else
-      (3...arguments.length).each do |i|
-        json_names.push(arguments[i])
-      end
-    end
 
     LogManager.log_msg("Получены модели: #{json_names}")
 
@@ -42,11 +32,6 @@ class CommandActions
   def self.generate_models(submodule_path, module_name, models, submodule_json_mask)
     LogManager.log_msg("Запущен процесс генерации")
 
-    unless FileReader.check_json_files(submodule_json_mask)
-      LogManager.log_msg("Генерация не завершена")
-      exit
-    end
-
     generator = ModelGenerator.new
 
     models_path = "#{submodule_path}#{StaticPath.MODEL_SUBPATH}"
@@ -54,10 +39,11 @@ class CommandActions
     FileReader.touch_directory(models_path)
     FileReader.touch_directory(translators_path)
 
-    Dir.glob(submodule_json_mask) do |filename|
-      template = FileReader.read_template(filename)
+    configs = FileReader.get_all_jsons(submodule_json_mask)
+
+    configs.each do |config|
       generator.generate_model(
-        template,
+        config,
         module_name,
         models.model,
         models.translator_model,
@@ -66,7 +52,7 @@ class CommandActions
         translators_path
       )
 
-      LogManager.log_msg("#{template["name"]} закончила генерацию")
+      LogManager.log_msg("#{config["name"]} закончила генерацию")
     end
 
     LogManager.log_msg("Генерация завершена")
@@ -76,24 +62,20 @@ class CommandActions
   def self.generate_seeds(submodule_path, submodule_json_mask, models)
     LogManager.log_msg("Запущен процесс генерации сидов")
 
-    unless FileReader.check_json_files(submodule_json_mask)
-      LogManager.log_msg("Генерация сидов не завершена")
-      exit
-    end
-
     generator = ModelGenerator.new
 
     seeds_path = "#{submodule_path}#{StaticPath.SEEDS_SUBPATH}"
     FileReader.touch_directory(seeds_path)
 
-    Dir.glob(submodule_json_mask) do |filename|
-      template = FileReader.read_template(filename)
+    configs = FileReader.get_all_jsons(submodule_json_mask)
+
+    configs.each do |config|
       generator.generate_seeds(
-        template,
+        config,
         seeds_path,
         models.seeds_model
       )
-      LogManager.log_msg("#{template["name"]} сид закончила генерацию")
+      LogManager.log_msg("#{config["name"]} сид закончила генерацию")
     end
 
     LogManager.log_msg("Генерация сидов завершена")
