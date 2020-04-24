@@ -1,6 +1,6 @@
 //
 // Model+Seeds
-// Generated on 13/03/2020 by gen v0.3
+// Generated on 24/04/2020 by gen v0.3.4
 //
 
 import AlfaFoundation
@@ -9,11 +9,15 @@ extension Model {
     enum Seeds {
         static let value = Model(
             optUrl: <#URL?#>,
-            normUrl: <#URL#>,
+            normURL: <#URL#>,
             someHash: <#[String: Any]#>,
             someOptionalHash: <#[String: Any]?#>,
             someDecimal: <#Decimal#>,
-            someOptionalDecimal: <#Decimal?#>
+            someOptionalDecimal: <#Decimal?#>,
+            customProperty: <#Amount#>,
+            customOptionalProperty: <#Amount?#>,
+            customArray: <#[Amount]#>,
+            customOptionalArray: <#[Amount]?#>
         )
     }
 }

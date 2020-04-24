@@ -1,6 +1,6 @@
 //
 // ModelTranslator Tests
-// Generated on 13/03/2020 by gen v0.3
+// Generated on 24/04/2020 by gen v0.3.4
 //
 
 import AlfaFoundation
@@ -43,6 +43,16 @@ final class ModelTranslatorTests: QuickSpec {
                     try translator.translateFrom(dictionary: TestData.validDTOWithoutSomeOptionalDecimal)
                 }.to(equal(TestData.validModelWithoutSomeOptionalDecimal))
             }
+            it("should return data model for valid DTO without customOptionalProperty") {
+                expect {
+                    try translator.translateFrom(dictionary: TestData.validDTOWithoutCustomOptionalProperty)
+                }.to(equal(TestData.validModelWithoutCustomOptionalProperty))
+            }
+            it("should return data model for valid DTO without customOptionalArray") {
+                expect {
+                    try translator.translateFrom(dictionary: TestData.validDTOWithoutCustomOptionalArray)
+                }.to(equal(TestData.validModelWithoutCustomOptionalArray))
+            }
         }
 
         describe(".translateToDictionary") {
@@ -66,55 +76,129 @@ extension ModelTranslatorTests {
         static let validDTO: [String: Any] = [
             keys.someHash.rawValue: validModel.someHash,
             keys.someOptionalHash.rawValue: validModel.someOptionalHash as Any,
+            keys.customProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customProperty),
+            keys.customOptionalProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customOptionalProperty),
+            keys.customArray.rawValue: AmountTranslator().translateToArray(validModel.customArray),
+            keys.customOptionalArray.rawValue: AmountTranslator().translateToArray(validModel.customOptionalArray),
             keys.optUrl.rawValue: validModel.optUrl?.absoluteString as Any,
-            keys.normUrl.rawValue: validModel.normUrl.absoluteString,
+            keys.normURL.rawValue: validModel.normURL.absoluteString,
             keys.someDecimal.rawValue: (validModel.someDecimal as NSDecimalNumber).doubleValue,
             keys.someOptionalDecimal.rawValue: (validModel.someOptionalDecimal as NSDecimalNumber?)?.doubleValue as Any,
         ]
         static let validModelWithoutOptUrl = Model(
             optUrl: nil,
-            normUrl: validModel.normUrl,
+            normURL: validModel.normURL,
             someHash: validModel.someHash,
             someOptionalHash: validModel.someOptionalHash,
             someDecimal: validModel.someDecimal,
-            someOptionalDecimal: validModel.someOptionalDecimal
+            someOptionalDecimal: validModel.someOptionalDecimal,
+            customProperty: validModel.customProperty,
+            customOptionalProperty: validModel.customOptionalProperty,
+            customArray: validModel.customArray,
+            customOptionalArray: validModel.customOptionalArray
         )
         static let validDTOWithoutOptUrl: [String: Any] = [
             keys.someHash.rawValue: validModel.someHash,
             keys.someOptionalHash.rawValue: validModel.someOptionalHash as Any,
-            keys.normUrl.rawValue: validModel.normUrl.absoluteString,
+            keys.customProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customProperty),
+            keys.customOptionalProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customOptionalProperty),
+            keys.customArray.rawValue: AmountTranslator().translateToArray(validModel.customArray),
+            keys.customOptionalArray.rawValue: AmountTranslator().translateToArray(validModel.customOptionalArray),
+            keys.normURL.rawValue: validModel.normURL.absoluteString,
             keys.someDecimal.rawValue: (validModel.someDecimal as NSDecimalNumber).doubleValue,
             keys.someOptionalDecimal.rawValue: (validModel.someOptionalDecimal as NSDecimalNumber?)?.doubleValue as Any,
         ]
         static let validModelWithoutSomeOptionalHash = Model(
             optUrl: validModel.optUrl,
-            normUrl: validModel.normUrl,
+            normURL: validModel.normURL,
             someHash: validModel.someHash,
             someOptionalHash: nil,
             someDecimal: validModel.someDecimal,
-            someOptionalDecimal: validModel.someOptionalDecimal
+            someOptionalDecimal: validModel.someOptionalDecimal,
+            customProperty: validModel.customProperty,
+            customOptionalProperty: validModel.customOptionalProperty,
+            customArray: validModel.customArray,
+            customOptionalArray: validModel.customOptionalArray
         )
         static let validDTOWithoutSomeOptionalHash: [String: Any] = [
             keys.someHash.rawValue: validModel.someHash,
+            keys.customProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customProperty),
+            keys.customOptionalProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customOptionalProperty),
+            keys.customArray.rawValue: AmountTranslator().translateToArray(validModel.customArray),
+            keys.customOptionalArray.rawValue: AmountTranslator().translateToArray(validModel.customOptionalArray),
             keys.optUrl.rawValue: validModel.optUrl?.absoluteString as Any,
-            keys.normUrl.rawValue: validModel.normUrl.absoluteString,
+            keys.normURL.rawValue: validModel.normURL.absoluteString,
             keys.someDecimal.rawValue: (validModel.someDecimal as NSDecimalNumber).doubleValue,
             keys.someOptionalDecimal.rawValue: (validModel.someOptionalDecimal as NSDecimalNumber?)?.doubleValue as Any,
         ]
         static let validModelWithoutSomeOptionalDecimal = Model(
             optUrl: validModel.optUrl,
-            normUrl: validModel.normUrl,
+            normURL: validModel.normURL,
             someHash: validModel.someHash,
             someOptionalHash: validModel.someOptionalHash,
             someDecimal: validModel.someDecimal,
-            someOptionalDecimal: nil
+            someOptionalDecimal: nil,
+            customProperty: validModel.customProperty,
+            customOptionalProperty: validModel.customOptionalProperty,
+            customArray: validModel.customArray,
+            customOptionalArray: validModel.customOptionalArray
         )
         static let validDTOWithoutSomeOptionalDecimal: [String: Any] = [
             keys.someHash.rawValue: validModel.someHash,
             keys.someOptionalHash.rawValue: validModel.someOptionalHash as Any,
+            keys.customProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customProperty),
+            keys.customOptionalProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customOptionalProperty),
+            keys.customArray.rawValue: AmountTranslator().translateToArray(validModel.customArray),
+            keys.customOptionalArray.rawValue: AmountTranslator().translateToArray(validModel.customOptionalArray),
             keys.optUrl.rawValue: validModel.optUrl?.absoluteString as Any,
-            keys.normUrl.rawValue: validModel.normUrl.absoluteString,
+            keys.normURL.rawValue: validModel.normURL.absoluteString,
             keys.someDecimal.rawValue: (validModel.someDecimal as NSDecimalNumber).doubleValue,
+        ]
+        static let validModelWithoutCustomOptionalProperty = Model(
+            optUrl: validModel.optUrl,
+            normURL: validModel.normURL,
+            someHash: validModel.someHash,
+            someOptionalHash: validModel.someOptionalHash,
+            someDecimal: validModel.someDecimal,
+            someOptionalDecimal: validModel.someOptionalDecimal,
+            customProperty: validModel.customProperty,
+            customOptionalProperty: nil,
+            customArray: validModel.customArray,
+            customOptionalArray: validModel.customOptionalArray
+        )
+        static let validDTOWithoutCustomOptionalProperty: [String: Any] = [
+            keys.someHash.rawValue: validModel.someHash,
+            keys.someOptionalHash.rawValue: validModel.someOptionalHash as Any,
+            keys.customProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customProperty),
+            keys.customArray.rawValue: AmountTranslator().translateToArray(validModel.customArray),
+            keys.customOptionalArray.rawValue: AmountTranslator().translateToArray(validModel.customOptionalArray),
+            keys.optUrl.rawValue: validModel.optUrl?.absoluteString as Any,
+            keys.normURL.rawValue: validModel.normURL.absoluteString,
+            keys.someDecimal.rawValue: (validModel.someDecimal as NSDecimalNumber).doubleValue,
+            keys.someOptionalDecimal.rawValue: (validModel.someOptionalDecimal as NSDecimalNumber?)?.doubleValue as Any,
+        ]
+        static let validModelWithoutCustomOptionalArray = Model(
+            optUrl: validModel.optUrl,
+            normURL: validModel.normURL,
+            someHash: validModel.someHash,
+            someOptionalHash: validModel.someOptionalHash,
+            someDecimal: validModel.someDecimal,
+            someOptionalDecimal: validModel.someOptionalDecimal,
+            customProperty: validModel.customProperty,
+            customOptionalProperty: validModel.customOptionalProperty,
+            customArray: validModel.customArray,
+            customOptionalArray: nil
+        )
+        static let validDTOWithoutCustomOptionalArray: [String: Any] = [
+            keys.someHash.rawValue: validModel.someHash,
+            keys.someOptionalHash.rawValue: validModel.someOptionalHash as Any,
+            keys.customProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customProperty),
+            keys.customOptionalProperty.rawValue: AmountTranslator().translateToDictionary(from: validModel.customOptionalProperty),
+            keys.customArray.rawValue: AmountTranslator().translateToArray(validModel.customArray),
+            keys.optUrl.rawValue: validModel.optUrl?.absoluteString as Any,
+            keys.normURL.rawValue: validModel.normURL.absoluteString,
+            keys.someDecimal.rawValue: (validModel.someDecimal as NSDecimalNumber).doubleValue,
+            keys.someOptionalDecimal.rawValue: (validModel.someOptionalDecimal as NSDecimalNumber?)?.doubleValue as Any,
         ]
     }
 }

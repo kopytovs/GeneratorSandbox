@@ -8,8 +8,9 @@
             "description": "Опциональный урл"
         },
         {
-            "key": "normUrl",
+            "key": "normURL",
             "type": "URL",
+            "custom_dto": "normUrl",
             "description": "Не опциональный урл"
         },
         {
@@ -31,6 +32,26 @@
             "key": "someOptionalDecimal",
             "type": "Decimal?",
             "description": "Какой-то опциональный десимал"
+        },
+        {
+            "key": "customProperty",
+            "type": "Amount",
+            "description": "Какая-то кастомная пропертя"
+        },
+        {
+            "key": "customOptionalProperty",
+            "type": "Amount?",
+            "description": "Какая-то кастомная и опциональная пропертя"
+        },
+        {
+            "key": "customArray",
+            "type": "[Amount]",
+            "description": "Массив каких-то кастомных пропертей"
+        },
+        {
+            "key": "customOptionalArray",
+            "type": "[Amount]?",
+            "description": "Опциональный массив каких-то кастомных пропертей"
         }
     ]
 }

@@ -1,6 +1,6 @@
 //
 // ShareholderTranslator Tests
-// Generated on 13/03/2020 by gen v0.3
+// Generated on 24/04/2020 by gen v0.3.4
 //
 
 import AlfaFoundation
