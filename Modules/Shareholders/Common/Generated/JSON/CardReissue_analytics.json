@@ -1,0 +1,20 @@
+{
+  "name": "CardReissue",
+  "description": "События аналитики модуля CardReissue",
+  "category": "Card Reissuing",
+  "events": [
+    {
+      "action": "Click",
+      "label": "Choose Office",
+      "description": "Нажатие на выбор офиса",
+      "screen": "Card Reissue"
+    },
+    {
+      "action": "Select",
+      "label": "Reissue Reason",
+      "description": "Нажатие на выбор причины",
+      "screen": "Card Reissue",
+      "property": "reasonID"
+    }
+  ]
+}
