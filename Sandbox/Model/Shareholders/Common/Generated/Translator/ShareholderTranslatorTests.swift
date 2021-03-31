@@ -1,6 +1,6 @@
 //
 // ShareholderTranslator Tests
-// Generated on 24/04/2020 by gen v0.3.4
+// Generated on 30/03/2021 by gen v0.5.3
 //
 
 import AlfaFoundation
@@ -8,7 +8,7 @@ import Nimble
 import Quick
 import SharedModels
 
-@testable import Shareholders
+@testable import Model
 
 final class ShareholderTranslatorTests: QuickSpec {
     override func spec() {
@@ -49,7 +49,7 @@ final class ShareholderTranslatorTests: QuickSpec {
     }
 }
 
-extension ShareholderTranslatorTests {
+private extension ShareholderTranslatorTests {
     enum TestData {
         static let keys = ShareholderTranslator.DTOKeys.self
         static let emptyDTO: [String: Any] = [:]

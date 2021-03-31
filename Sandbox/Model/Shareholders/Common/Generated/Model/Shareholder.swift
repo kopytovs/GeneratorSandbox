@@ -1,6 +1,6 @@
 //
 // Shareholder Model
-// Generated on 24/04/2020 by gen v0.3.4
+// Generated on 30/03/2021 by gen v0.5.3
 //
 
 import AlfaFoundation

@@ -1,0 +1,4 @@
+paths:
+  templates: "Templates"
+  sourcery: "Pods/Sourcery/bin/sourcery"
+  swiftformat: "Pods/SwiftFormat/CommandLineTool/swiftformat"

@@ -1,6 +1,6 @@
 //
 // Shareholder Translator
-// Generated on 24/04/2020 by gen v0.3.4
+// Generated on 30/03/2021 by gen v0.5.3
 //
 
 import AlfaFoundation
@@ -35,7 +35,7 @@ struct ShareholderTranslator: Translator {
     }
 
     func translateToDictionary(_ object: Shareholder) -> [String: Any] {
-        return fromDTO(
+        var json = fromDTO(
             DTOKeys.self,
             [
                 .id: object.uid,
@@ -43,9 +43,10 @@ struct ShareholderTranslator: Translator {
                 .name: object.name,
                 .profit: object.profit,
                 .company: object.company.rawValue,
-                .amount: customAmountTranslator.translateToDictionary(from: object.amount),
             ]
         )
+        json.setUnlessEmptyOrNil(customAmountTranslator.translateToDictionary(from: object.amount, forKey: DTOKeys.amount))
+        return json
     }
 }
 

@@ -1,13 +1,13 @@
 //
 // ModelTranslator Tests
-// Generated on 24/04/2020 by gen v0.3.4
+// Generated on 30/03/2021 by gen v0.5.3
 //
 
 import AlfaFoundation
 import Nimble
 import Quick
 
-@testable import Shareholders
+@testable import Model
 
 final class ModelTranslatorTests: QuickSpec {
     override func spec() {
@@ -68,7 +68,7 @@ final class ModelTranslatorTests: QuickSpec {
     }
 }
 
-extension ModelTranslatorTests {
+private extension ModelTranslatorTests {
     enum TestData {
         static let keys = ModelTranslator.DTOKeys.self
         static let emptyDTO: [String: Any] = [:]

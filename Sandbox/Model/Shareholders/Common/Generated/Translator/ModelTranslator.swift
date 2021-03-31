@@ -1,6 +1,6 @@
 //
 // Model Translator
-// Generated on 24/04/2020 by gen v0.3.4
+// Generated on 30/03/2021 by gen v0.5.3
 //
 
 import AlfaFoundation
@@ -46,21 +46,22 @@ struct ModelTranslator: Translator {
     }
 
     func translateToDictionary(_ object: Model) -> [String: Any] {
-        return fromDTO(
+        var json = fromDTO(
             DTOKeys.self,
             [
                 .someHash: object.someHash,
-                .someOptionalHash: object.someOptionalHash as Any,
                 .customProperty: amountTranslator.translateToDictionary(from: object.customProperty),
-                .customOptionalProperty: amountTranslator.translateToDictionary(from: object.customOptionalProperty),
                 .customArray: amountTranslator.translateToArray(object.customArray),
-                .customOptionalArray: amountTranslator.translateToArray(object.customOptionalArray),
-                .optUrl: object.optUrl?.absoluteString as Any,
                 .normURL: object.normURL.absoluteString,
                 .someDecimal: (object.someDecimal as NSDecimalNumber).doubleValue,
-                .someOptionalDecimal: (object.someOptionalDecimal as NSDecimalNumber?)?.doubleValue as Any,
             ]
         )
+        json.setUnlessNil(object.someOptionalHash, forKey: DTOKeys.someOptionalHash)
+        json.setUnlessNil(object.optUrl?.absoluteString, forKey: DTOKeys.optUrl)
+        json.setUnlessNil((object.someOptionalDecimal as NSDecimalNumber?)?.doubleValue, forKey: DTOKeys.someOptionalDecimal)
+        json.setUnlessEmptyOrNil(amountTranslator.translateToDictionary(from: object.customOptionalProperty, forKey: DTOKeys.customOptionalProperty))
+        json.setUnlessEmptyOrNil(amountTranslator.translateToArray(object.customOptionalArray, forKey: DTOKeys.customOptionalArray))
+        return json
     }
 }
 
