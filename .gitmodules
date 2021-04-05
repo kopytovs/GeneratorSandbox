@@ -1,0 +1,3 @@
+[submodule "Templates"]
+	path = Templates
+	url = ssh://git@git.moscow.alfaintra.net/iosutils/code-generation-templates.git
