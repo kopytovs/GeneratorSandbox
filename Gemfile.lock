@@ -1,7 +1,7 @@
 PATH
   remote: ../servicegenerator
   specs:
-    service_generator (0.5.5)
+    service_generator (0.6.2)
       mustache (= 1.1.1)
 
 GEM

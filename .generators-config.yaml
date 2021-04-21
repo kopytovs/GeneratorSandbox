@@ -1,4 +1,14 @@
-paths:
+common:
   templates: "Templates"
   sourcery: "Pods/Sourcery/bin/sourcery"
   swiftformat: "Pods/SwiftFormat/CommandLineTool/swiftformat"
+  swiftgen: "Pods/SwiftGen/bin/swiftgen"
+
+strings:
+  swiftformat_config: "Sandbox/Strings/.swiftformat"
+  output_last_path_component: "Localization/Localization.swift"
+  input_last_path_component: "Localizable.strings"
+  resources_folder_prefix: "Resources"
+  module_folders_paths:
+    - "Sandbox/Strings/Frameworks"
+    - "Sandbox/Strings/Modules"

@@ -1,0 +1,46 @@
+# SwiftFormat 0.47.9-0
+
+# rules
+
+--disable numberFormatting
+--disable preferKeyPath
+--disable wrapMultilineStatementBraces
+--disable wrapSwitchCases
+--enable isEmpty,markTypes,organizeDeclarations,sortedSwitchCases
+
+# format options
+
+--allman false
+--closingparen balanced
+--commas always
+--elseposition same-line
+--empty void
+--extensionacl on-extension
+--funcattributes prev-line
+--groupedextension MARK: - %c
+--ifdef no-indent
+--importgrouping testable-bottom
+--indent 4
+--indentcase false
+--linebreaks lf
+--markextensions if-not-empty
+--marktypes never
+--maxwidth none
+--modifierorder override,private,fileprivate,internal,public,open,private(set),internal(set),final,dynamic,optional,required,convenience,indirect,lazy,static,class,weak,unowned,mutating,nonmutating,prefix,infix,postfix
+--nospaceoperators
+--operatorfunc spaced
+--organizetypes enum
+--patternlet hoist
+--self remove
+--selfrequired validate
+--semicolons inline
+--shortoptionals always
+--stripunusedargs always
+--trailingclosures
+--trimwhitespace always
+--typeattributes prev-line
+--varattributes prev-line
+--wraparguments before-first
+--wrapcollections before-first
+--wrapparameters before-first
+--xcodeindentation disabled

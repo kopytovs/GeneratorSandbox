@@ -8,4 +8,5 @@ target 'Sandbox' do
   # Pods for Sandbox
   pod 'SwiftFormat/CLI'
   pod 'Sourcery'
+  pod 'SwiftGen'
 end
